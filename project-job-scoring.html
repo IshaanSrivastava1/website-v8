@@ -44,32 +44,44 @@
       <div class="project-hero">
         <h1>AI Job-Fit Scoring Agent</h1>
         <p class="caption">Python · Claude API · Structured Outputs · Prompt Caching · GitHub Actions · Discord</p>
-        <a href="https://github.com/IshaanSrivastava1/job-alerts" class="live-link" target="_blank" rel="noopener noreferrer">View source on GitHub →</a>
+        <p class="caption">Built August 2026 · retired October 2026 — the job-alert watcher it sat inside is still running, without the AI layer</p>
+        <a href="https://github.com/IshaanSrivastava1/job-alerts/tree/bf31532" class="live-link" target="_blank" rel="noopener noreferrer">View the code as built →</a>
       </div>
 
       <div class="project-section">
         <h2>What I Built</h2>
         <ul class="bullet-list">
           <li>I already ran a job-alert watcher that polls the public Greenhouse and Lever job-board APIs across roughly <span class="highlight">90 companies</span> every few minutes via GitHub Actions and pushes analyst-role matches to a private Discord channel.</li>
-          <li>A keyword filter on "analyst" was matching sales analysts, security analysts, and senior roles I'm not qualified for, so most alerts were noise. I added a scoring layer: before each new posting is sent, its full description goes to Claude along with a profile of my background, and it returns a <span class="highlight">fit score from 1 to 10</span>, a one-sentence reason, a list of red flags, and whether the seniority is under, over, or a match.</li>
-          <li>Every posting still gets sent — nothing is filtered out. The score just rides along in the Discord message, with the border colour-coded green, amber, or red, and red flags like "no visa sponsorship" listed underneath.</li>
+          <li>A keyword filter on "analyst" was matching sales analysts, security analysts, and senior roles I'm not qualified for, so most alerts were noise. I added a scoring layer: before each new posting was sent, its full description went to Claude along with a profile of my background, and it returned a <span class="highlight">fit score from 1 to 10</span>, a one-sentence reason, a list of red flags, and whether the seniority was under, over, or a match.</li>
+          <li>Every posting was still sent — nothing was filtered out. The score rode along in the Discord message, with the border colour-coded green, amber, or red, and red flags like "no visa sponsorship" listed underneath.</li>
         </ul>
       </div>
 
       <div class="project-section">
-        <h2>How It Works</h2>
+        <h2>How It Worked</h2>
         <ul class="bullet-list">
-          <li><span class="highlight">Structured outputs:</span> the response shape is enforced by the API against a JSON schema, so there's no parsing or retry logic for malformed replies.</li>
-          <li><span class="highlight">Prompt caching:</span> my profile is identical on every call, so it's sent as a cached block — about 2,800 tokens are read from cache per call and only around 220 are billed at full price, which works out to roughly <span class="highlight">$0.002 per job scored</span>.</li>
-          <li><span class="highlight">Fail-open:</span> if the API key is missing or the call fails, the alert still goes out, just without a score. Scoring can never break the alerting it sits inside — 22 unit tests cover those degraded paths.</li>
-          <li>The profile itself is supplied as a GitHub Actions secret rather than a committed file, since the repository is public.</li>
+          <li><span class="highlight">Structured outputs:</span> the response shape was enforced by the API against a JSON schema, so there was no parsing or retry logic for malformed replies.</li>
+          <li><span class="highlight">Prompt caching:</span> my profile was identical on every call, so it was sent as a cached block — about 2,800 tokens were read from cache per call and only around 220 billed at full price, roughly <span class="highlight">$0.002 per job scored</span>.</li>
+          <li><span class="highlight">Fail-open:</span> if the API key was missing or the call failed, the alert still went out, just without a score. Scoring could never break the alerting it sat inside — 22 unit tests covered those degraded paths.</li>
+          <li>The profile itself was supplied as a GitHub Actions secret rather than a committed file, since the repository is public.</li>
+        </ul>
+      </div>
+
+      <div class="project-section">
+        <h2>What I Learned</h2>
+        <ul class="bullet-list">
+          <li><span class="highlight">Start at the lowest rung of the agent ladder.</span> This didn't need tools or a loop — one structured call answered the question. The market brief agent, built alongside it, needed a full tool-use loop; matching the design to the problem kept this one small and cheap.</li>
+          <li><span class="highlight">Let the API enforce the output.</span> A schema-enforced response removed a whole category of code: no JSON parsing, no retries, no malformed-reply handling.</li>
+          <li><span class="highlight">Cache what doesn't change.</span> Most of each request was the same profile text; caching it made per-call cost almost entirely the posting itself.</li>
+          <li><span class="highlight">Fail-open works — and hides failures.</span> When the API key was invalidated in September, alerts kept flowing exactly as designed. But because nothing broke, nothing told me: scoring had silently stopped for weeks. Graceful degradation needs a signal that it's happening.</li>
+          <li><span class="highlight">Weigh recurring cost against the value it adds.</span> I retired the scoring layer in October 2026 because its ongoing token spend wasn't something I needed. An AI step should keep earning its running cost, not just be impressive.</li>
         </ul>
       </div>
 
       <div class="project-section">
         <h2>Thesis</h2>
-        <p>I built this to learn how AI agents actually work, alongside a second project (the market brief agent) that does the same thing in a different shape. This one is the simpler end of that spectrum: a single structured API call dropped into a workflow that already worked, not a full tool-use loop.</p>
-        <p>The honest limitation: the score is only as good as the profile it's compared against, and calibration is an ongoing thing — a job the model scores a 4 is a judgement, not a fact.</p>
+        <p>I built this to learn how AI agents actually work, alongside a second project (the market brief agent) that did the same thing in a different shape. This one was the simpler end of that spectrum: a single structured API call dropped into a workflow that already worked, not a full tool-use loop.</p>
+        <p>The honest limitation: a score is only as good as the profile it's compared against — a job the model scored a 4 was a judgement, not a fact.</p>
       </div>
     </main>
 

@@ -44,32 +44,45 @@
       <div class="project-hero">
         <h1>AI Market Brief Agent</h1>
         <p class="caption">Python · Claude API · Tool Use · Agent Loop · Web Search · GitHub Actions</p>
-        <a href="https://ishaansrivastava1.github.io/markets-dashboard/arb.html" class="live-link" target="_blank" rel="noopener noreferrer">View live tracker →</a>
+        <p class="caption">Built August 2026 · retired October 2026 along with the gold arbitrage tracker it was part of</p>
+        <a href="https://ishaansrivastava1.github.io/markets-dashboard/arb.html" class="live-link" target="_blank" rel="noopener noreferrer">View the archived tracker →</a>
       </div>
 
       <div class="project-section">
         <h2>What I Built</h2>
         <ul class="bullet-list">
-          <li>A "What's going on today" section at the top of my gold arbitrage tracker, written by an AI agent instead of a template. The tracker scans every open gold-price market on Polymarket and Kalshi every 30 minutes and flags contracts priced inconsistently against each other — it shows the numbers well but couldn't explain them.</li>
-          <li>The agent is given <span class="highlight">three tools</span> and decides for itself which to use and when it has enough to write: one returns the arbitrage opportunities found in the current scan, one returns the normalised contract prices from both platforms, and a third runs a web search on Anthropic's own infrastructure, so there's no second API key or news provider to manage.</li>
-          <li>It typically checks the market data first, and only searches the news when something in the numbers needs explaining, then writes a few paragraphs on what stands out, citing its sources — rendered as links under the brief.</li>
+          <li>A "What's going on today" section at the top of my gold arbitrage tracker, written by an AI agent instead of a template. The tracker scanned every open gold-price market on Polymarket and Kalshi and flagged contracts priced inconsistently against each other — it showed the numbers well but couldn't explain them.</li>
+          <li>The agent was given <span class="highlight">three tools</span> and decided for itself which to use and when it had enough to write: one returned the arbitrage opportunities found in the current scan, one returned the normalised contract prices from both platforms, and a third ran a web search on Anthropic's own infrastructure, so there was no second API key or news provider to manage.</li>
+          <li>It typically checked the market data first, searched the news only when something in the numbers needed explaining, then wrote a few paragraphs on what stood out, citing its sources — rendered as links under the brief.</li>
         </ul>
       </div>
 
       <div class="project-section">
-        <h2>How It Works</h2>
+        <h2>How It Worked</h2>
         <ul class="bullet-list">
-          <li><span class="highlight">The loop:</span> the model picks a tool, the code runs it, the result goes back, and it repeats until the model stops asking. That loop is the whole idea of an agent.</li>
-          <li><span class="highlight">Two calls by design:</span> the agent researches and writes prose, then a second, cheaper call reformats that prose into a headline, body, and source list for the page. Keeping the tool loop separate from the output shape keeps both simple.</li>
-          <li><span class="highlight">Cost control:</span> the workflow runs 48 times a day, and regenerating the brief every time would mostly rewrite the same paragraph. It's regenerated only when the set of detected opportunities actually changes, or when the cached one passes six hours old — taking it from 48 model calls a day to a handful.</li>
-          <li><span class="highlight">Fail-open:</span> if the model is unavailable, the previous brief is shown marked as possibly out of date, or the section removes itself. A failed brief never fails the page build — 26 unit tests cover the caching and fallback logic.</li>
+          <li><span class="highlight">The loop:</span> the model picked a tool, the code ran it, the result went back, and it repeated until the model stopped asking. That loop is the whole idea of an agent.</li>
+          <li><span class="highlight">Two calls by design:</span> the agent researched and wrote prose, then a second, cheaper call reformatted that prose into a headline, body, and source list for the page.</li>
+          <li><span class="highlight">Cost control:</span> the tracker was scheduled every 30 minutes, and regenerating the brief on every scan would mostly have rewritten the same paragraph. It regenerated only when the set of detected opportunities changed, or when the cached brief passed six hours old — a handful of model calls a day instead of 48.</li>
+          <li><span class="highlight">Fail-open:</span> if the model was unavailable, the previous brief was shown marked as possibly out of date, or the section removed itself. A failed brief never failed the page build — 26 unit tests covered the caching and fallback logic.</li>
+        </ul>
+      </div>
+
+      <div class="project-section">
+        <h2>What I Learned</h2>
+        <ul class="bullet-list">
+          <li><span class="highlight">Tools should hand over data you already have.</span> The tools were thin wrappers around data the tracker had just fetched, not fresh API calls — so the agent never doubled the slowest part of the build or saw numbers different from the page.</li>
+          <li><span class="highlight">Separate thinking from formatting.</span> Rather than one call that researched, used tools, and emitted strict JSON at once, a free-form research loop followed by a schema-enforced formatting call kept each step simple and easy to debug.</li>
+          <li><span class="highlight">Gate model calls on what changed.</span> Fingerprinting the opportunity set and skipping the call when it hadn't moved was the single biggest cost lever — from 48 model calls a day to a handful.</li>
+          <li><span class="highlight">Be specific about what you want cited.</span> A citation that only names a publication can't become a link. Requiring the full URL right after each claim is what made sources renderable on the page.</li>
+          <li><span class="highlight">Tell the model a quiet day is a valid answer.</span> Most scans found nothing, so the prompt explicitly allowed "nothing unusual today". The briefs that followed called tenth-of-a-cent edges what they were — rounding noise — instead of inventing a story.</li>
+          <li><span class="highlight">Fail-open needs a signal.</span> When the API key was invalidated in September, the page kept building exactly as designed — and quietly served a weeks-old brief marked "may be out of date". It degraded gracefully, but nothing alerted me that it had.</li>
         </ul>
       </div>
 
       <div class="project-section">
         <h2>Thesis</h2>
-        <p>I built this to learn how AI agents actually work, alongside a second project (the job-fit scoring agent) that does the same thing in a different shape. This one is the fuller version: a genuine tool-use loop where the model decides what to check rather than following a fixed script.</p>
-        <p>The honest limitation: the agent describes and explains, it does not advise. The page says so explicitly, and the brief is written to avoid predictions or trade recommendations.</p>
+        <p>I built this to learn how AI agents actually work, alongside a second project (the job-fit scoring agent) that did the same thing in a different shape. This one was the fuller version: a genuine tool-use loop where the model decided what to check rather than following a fixed script.</p>
+        <p>The honest limitation: the agent described and explained, it did not advise. The page said so explicitly, and the brief was written to avoid predictions or trade recommendations.</p>
       </div>
     </main>
 
