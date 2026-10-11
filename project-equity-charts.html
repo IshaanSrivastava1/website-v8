@@ -43,17 +43,21 @@
 
       <div class="project-hero">
         <h1>Real-Time Equity Charting App</h1>
-        <p class="caption">Python · FastAPI · WebSockets · Alpaca API · TradingView Lightweight Charts · Render</p>
+        <p class="caption">Python · FastAPI · WebSockets · Alpaca API · pandas/NumPy · TradingView Lightweight Charts · GitHub Actions · Render</p>
         <a href="https://equity-charts.onrender.com" class="live-link" target="_blank" rel="noopener noreferrer">View live app →</a>
       </div>
 
       <div class="project-section">
         <h2>What I Built</h2>
         <ul class="bullet-list">
-          <li><span class="highlight">Search any US stock</span> and pull up an interactive candlestick chart on daily or weekly timeframes.</li>
+          <li><span class="highlight">Search any US stock or ETF</span> and pull up an interactive candlestick chart on daily or weekly timeframes.</li>
           <li><span class="highlight">Real-time price streaming</span> — the current candle and price update live from a market-data feed during trading hours.</li>
           <li>Automatic <span class="highlight">gap detection</span> plus a full set of technical indicators: EMA and SMA overlays, Bollinger Bands, and RSI &amp; MACD sub-charts.</li>
           <li>Click-and-drag <span class="highlight">trendline drawing</span> — draw, move, and delete lines directly on the chart, saved per ticker so they persist between visits.</li>
+          <li><span class="highlight">Fibonacci retracements</span>: drag from one swing to another, or press Auto Fib to place them on the latest major swing.</li>
+          <li><span class="highlight">Support and resistance analysis</span> that runs entirely in code: it finds the price zones where a stock has repeatedly turned, rates each zone's strength, shades them on the chart, and writes a plain-English explanation of why each level matters, with no AI service or API costs.</li>
+          <li>A daily <span class="highlight">20-day EMA scanner</span>: after each market close, a scheduled job checks about 11,700 US stocks and ETFs for names that just closed below their 20-day EMA. Results appear in the app's Scanner view, and it can post a digest of the most-traded ones to Discord.</li>
+          <li>A <span class="highlight">Fundamentals</span> view for individual stocks: P/E, forward P/E, PEG, ROIC, operating margin and quarterly cash flow, built from SEC filings.</li>
         </ul>
       </div>
 
@@ -61,6 +65,7 @@
         <h2>How It Works</h2>
         <p>A <span class="highlight">FastAPI</span> backend serves both the JSON API and the charting frontend. Price history and all indicators are computed server-side with pandas/NumPy, and the charts are rendered with TradingView's Lightweight Charts library.</p>
         <p>The tricky part was live data: the market feed's free tier allows only one streaming connection, so the server keeps a <span class="highlight">single shared connection</span> and fans each incoming trade out to every visitor watching that ticker — meaning many people can use the site at once without exhausting the limit. The whole thing is deployed on Render behind one shareable URL.</p>
+        <p>Support and resistance zones come from clustering past swing highs and lows, then scoring each zone on how often and how recently price reacted there, how far it moved away, whether old resistance turned into support, and whether it lines up with moving averages, Fibonacci levels or round numbers. The scanner runs in <span class="highlight">GitHub Actions</span> on official consolidated closing prices and uses the same EMA formula as the chart, so a flagged stock always matches what the chart shows.</p>
       </div>
 
       <div class="project-section">
